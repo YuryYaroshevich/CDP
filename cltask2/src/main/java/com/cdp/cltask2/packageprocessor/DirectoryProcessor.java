@@ -1,21 +1,16 @@
-package com.cdp.cltask1.dirprocessor;
+package com.cdp.cltask2.packageprocessor;
 
 import java.io.File;
 import java.io.FilenameFilter;
 
-import org.apache.log4j.Logger;
+import com.cdp.cltask2.propertyholder.PropertyHolder;
 
-import com.cdp.cltask1.propertyholder.PropertyHolder;
-
-public class DirectoryProcessor {
-	private static final Logger log = Logger.getLogger(DirectoryProcessor.class);
-	
+public class DirectoryProcessor {	
 	private static final PropertyHolder propertyHolder = PropertyHolder.getInstance();
 	
 	public File[] getFileList(final String extension) {
-		File dir = new File(propertyHolder.getProperty("directory"));
+		File dir = new File(propertyHolder.getProperty("dir.dev.functionality"));
 		File[] files = dir.listFiles(new FilenameFilter() {
-			@Override
 			public boolean accept(File dir, String name) {
 				return name.endsWith("." + extension);
 			}			
