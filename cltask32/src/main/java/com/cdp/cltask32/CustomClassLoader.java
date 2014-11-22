@@ -29,7 +29,8 @@ public class CustomClassLoader extends ClassLoader {
 			try {
 				statusOutputThread.join();
 			} catch (InterruptedException e) {
-				e.printStackTrace();
+				log.error(e);
+				throw new RuntimeException(e);
 			}			
 		}
 	}	
