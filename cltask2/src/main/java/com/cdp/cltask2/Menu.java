@@ -18,43 +18,44 @@ public class Menu {
 	private JarProcessor jarProcessor = new JarProcessor();
 	
 	public void start() {
-		log.info("Choose jar from the list(enter number). Enter 0 for exit:");
-		Scanner scanIn = new Scanner(System.in);
-		while (true) {
-			File[] jars = directoryProcessor.getFileList("jar");
-			showJars(jars);			
-			int jarNumber = scanIn.nextInt();
-			if (jarNumber == 0) {
-				break;
-			}
-			if (isValidIndex(jars.length, jarNumber)) {
-				log.info("Choose class from the list(enter number):");
-				File selectedJar = jars[jarNumber - 1];
-				List<JarEntry> classes = jarProcessor.getClasses(selectedJar);
-				showClasses(classes);		
-				scanIn = new Scanner(System.in);
-				int classNumber = scanIn.nextInt();
-				if (classNumber == 0) {
+		try (Scanner scanIn =  new Scanner(System.in)) {
+			while (true) {
+				log.info("Choose jar from the list(enter number). Enter 0 for exit:");
+				File[] jars = directoryProcessor.getFileList("jar");
+				showJars(jars);			
+				int jarNumber = scanIn.nextInt();
+				if (jarNumber == 0) {
 					break;
-				} 
-				if (isValidIndex(classes.size(), classNumber)) {
-					String classPathInJar = classes.get(classNumber - 1).getName();					
-					JarClassLoader classLoader = new JarClassLoader(selectedJar);
-					Class<?> clazz = classLoader.loadClass(classPathInJar);
+				}
+				if (isValidIndex(jars.length, jarNumber)) {
+					log.info("Choose class from the list(enter number):");
+					File selectedJar = jars[jarNumber - 1];
+					List<JarEntry> classes = jarProcessor.getClasses(selectedJar);
+					showClasses(classes);		
 					
-					log.info("Loaded class -> " + clazz);	
-					try {
-						clazz.newInstance();
-					} catch (InstantiationException | IllegalAccessException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				} else {
-					log.info("Invalid class number.");
+					int classNumber = scanIn.nextInt();
+					if (classNumber == 0) {
+						break;
+					} 
+					if (isValidIndex(classes.size(), classNumber)) {
+						String classPathInJar = classes.get(classNumber - 1).getName();					
+						JarClassLoader classLoader = new JarClassLoader(selectedJar);
+						Class<?> clazz = classLoader.loadClass(classPathInJar);
+						log.info("Loaded class -> " + clazz);		
+						try {
+							clazz.newInstance();
+						} catch (InstantiationException | IllegalAccessException e) {
+							log.error(e);
+							throw new RuntimeException(e);
+						}
+						log.info("###############");
+					} else {
+						log.info("Invalid class number.");
+					}	
+				} else {				
+					log.info("Invalid jar number.");
 				}	
-			} else {				
-				log.info("Invalid jar number.");
-			}	
+			}
 		}
 	}
 	
