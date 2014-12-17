@@ -16,6 +16,9 @@ public class DirFilesNumStatisticsOperation extends DirStatisticsOperation {
 		LOG.info("Start counting files in " + dirPath + " directory.");
 		File dir = new File(dirPath);
 		int filesNum = countFiles(dir);
+		if (Thread.currentThread().isInterrupted()) {
+			return;
+		}
 		try {
 			Thread.sleep(5000);
 			LOG.info("Directory " + dirPath + " contains " + filesNum + " files.");

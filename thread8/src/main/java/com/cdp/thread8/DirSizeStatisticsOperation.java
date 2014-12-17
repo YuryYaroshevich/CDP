@@ -16,6 +16,9 @@ public class DirSizeStatisticsOperation extends DirStatisticsOperation {
 		LOG.info("Start counting size of " + dirPath + " directory.");
 		File dir = new File(dirPath);
 		long size = countSize(dir);
+		if (Thread.currentThread().isInterrupted()) {
+			return;
+		}
 		try {
 			Thread.sleep(4500);
 			LOG.info("Size of " + dirPath + " is equal to " + size + " bytes.");

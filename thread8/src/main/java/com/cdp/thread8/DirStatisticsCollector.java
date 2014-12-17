@@ -8,7 +8,7 @@ import java.util.concurrent.Future;
 
 import org.apache.log4j.Logger;
 
-public class DirStatisticsCollector implements Runnable {
+public class DirStatisticsCollector {
 	private static final Logger LOG = Logger.getLogger(DirStatisticsCollector.class);
 	
 	private List<DirStatisticsOperation> operations;
@@ -19,8 +19,11 @@ public class DirStatisticsCollector implements Runnable {
 		this.operationExecutor = Executors.newFixedThreadPool(operations.size());
 	}
 
-	@Override
-	public void run() {
+	public ExecutorService getEngine() {
+		return operationExecutor;
+	}
+	
+	public void collect() {
 		LOG.info("Statisctics collecting is started.");
 		List<Future<?>> doneIndicators = new ArrayList<>();
 		for (DirStatisticsOperation operation : operations) {
@@ -29,20 +32,15 @@ public class DirStatisticsCollector implements Runnable {
 		}
 		
 		while (true) {
-			if (Thread.interrupted()) {
-				operationExecutor.shutdownNow();
-				LOG.info("Statisctics collecting is interrapted.");
-				break;
-			}
 			int numberOfDone = 0;
 			for (Future<?> doneIndicator : doneIndicators) {
-				numberOfDone += doneIndicator.isDone() ? 1 : 0;
+				numberOfDone += doneIndicator.isDone() || doneIndicator.isCancelled() ? 1 : 0;
 			}
 			if (numberOfDone == doneIndicators.size()) {
 				LOG.info("Statisctics collecting is done.");
+				operationExecutor.shutdownNow();
 				break;
 			}			
 		}
-		operationExecutor.shutdownNow();
 	}
 }

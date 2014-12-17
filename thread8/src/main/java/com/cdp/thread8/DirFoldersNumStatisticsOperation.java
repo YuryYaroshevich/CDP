@@ -20,6 +20,9 @@ public class DirFoldersNumStatisticsOperation extends DirStatisticsOperation {
 		for (File file : files) {
 			folderNum += file.isDirectory() ? 1 : 0;
 		}
+		if (Thread.currentThread().isInterrupted()) {
+			return;
+		}
 		try {
 			Thread.sleep(5500);
 			LOG.info("Directory " + dirPath + " contains " + folderNum + " folders.");
