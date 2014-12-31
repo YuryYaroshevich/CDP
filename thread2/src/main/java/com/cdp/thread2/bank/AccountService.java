@@ -1,5 +1,6 @@
 package com.cdp.thread2.bank;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import com.cdp.thread2.bank.dao.AccountDao;
@@ -28,7 +29,8 @@ public class AccountService {
 	}
 	
 	public Account exchange(Account account, Currency currency) {
-		exchanger.exchange(account, currency);
+		BigDecimal moneyInCurrency = exchanger.exchange(account, currency);
+		account.getAccountViews().put(currency, moneyInCurrency);
 		accountDao.save(account);
 		return account;
 	}

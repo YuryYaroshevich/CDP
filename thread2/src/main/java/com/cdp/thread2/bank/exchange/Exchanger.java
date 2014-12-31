@@ -9,17 +9,10 @@ import com.cdp.thread2.bank.model.Currency;
 public class Exchanger {
 	private Recounter recounter = new Recounter();
 
-	public void exchange(Account account, Currency currency) {
-		if (account.getAccountViews().containsKey(currency)) {
-			return;
-		}
-		
+	public BigDecimal exchange(Account account, Currency currency) {
 		Map<Currency, BigDecimal> accountViews = account.getAccountViews();
 		Currency oldCurrency = accountViews.keySet().iterator().next();
 		BigDecimal moneyOldCurrency = accountViews.get(oldCurrency);
-		
-		BigDecimal moneyNewCurrency = recounter.recount(oldCurrency, currency, moneyOldCurrency);
-		
-		accountViews.put(currency, moneyNewCurrency);
+		return recounter.recount(oldCurrency, currency, moneyOldCurrency);
 	}
 }

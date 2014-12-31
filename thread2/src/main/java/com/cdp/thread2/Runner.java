@@ -9,8 +9,6 @@ import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.PatternLayout;
 
 import com.cdp.thread2.bank.AccountService;
-import com.cdp.thread2.bank.dao.AccountDao;
-import com.cdp.thread2.bank.exchange.Exchanger;
 import com.cdp.thread2.bank.model.Account;
 import com.cdp.thread2.bank.model.Currency;
 import com.cdp.thread2.bank.model.Person;
@@ -28,23 +26,20 @@ public class Runner {
 		accountViews.put(Currency.RUSSIAN_RUBLE, new BigDecimal(234));
 		final Account ac = new Account(p, accountViews);
 		
-		final AccountDao dao = new AccountDao();
-		final Exchanger exchangeService = new Exchanger();
-		dao.save(ac);
+		final AccountService accountService = new AccountService();
+		accountService.save(ac);
 		System.out.println(ac);
 		
 		Thread t1 = new Thread(new Runnable() {
 			@Override
 			public void run() {
-				exchangeService.exchange(ac, Currency.DOLLAR);
-				dao.save(ac);
+				accountService.exchange(ac, Currency.DOLLAR);
 			}			
 		});
 		Thread t2 = new Thread(new Runnable() {
 			@Override
 			public void run() {
-				exchangeService.exchange(ac, Currency.EURO);
-				dao.save(ac);
+				accountService.exchange(ac, Currency.EURO);
 			}			
 		});
 		
@@ -53,8 +48,7 @@ public class Runner {
 		t1.join();
 		t2.join();
 		
-		System.out.println(dao.get(ac.getId()));
-		AccountService accountService = new AccountService();
+		System.out.println(accountService.get(ac.getId()));
 		accountService.remove(1);
 	}
 }
